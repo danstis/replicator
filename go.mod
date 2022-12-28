@@ -1,3 +1,3 @@
-module github.com/danstis/gotemplate
+module github.com/danstis/replicator
 
-go 1.18
+go 1.19
