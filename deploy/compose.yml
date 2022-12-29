@@ -21,7 +21,7 @@ services:
       - "14318:4318" # OTLP http receiver
       - "55679:55679" # zpages extension
 
-  app:
+  bot:
     build:
       context: ../
       dockerfile: cmd/replicator/dockerfile
@@ -33,5 +33,6 @@ services:
       - "OTEL_EXPORTER_OTLP_ENDPOINT_TYPE=http" # http or grpc
       - "OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}"
       - "OTEL_HEALTH_URL=http://collector:13133"
+      - "DISCORD_TOKEN=${DISCORD_TOKEN}"
     depends_on:
       - collector
