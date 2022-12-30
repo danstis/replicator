@@ -15,7 +15,6 @@ Projects should follow the folder structure from this standard project layout: [
 
 This repo uses [Conventional Commits](https://www.conventionalcommits.org/) to ensure the build numbering is generated correctly
 
-
 ### Invite Link
 
 The following link includes the following:
