@@ -14,3 +14,18 @@ Projects should follow the folder structure from this standard project layout: [
 ## Commit message style
 
 This repo uses [Conventional Commits](https://www.conventionalcommits.org/) to ensure the build numbering is generated correctly
+
+### Invite Link
+
+The following link includes the following:
+
+- Scopes:
+- - bot
+- - applications.commands
+- Bot Permissions:
+- - Send Messages
+- - Embed Links
+- - Attach Files
+- - Add Reactions
+
+`https://discord.com/api/oauth2/authorize?client_id=1057497180769894401&permissions=51264&scope=bot%20applications.commands`
