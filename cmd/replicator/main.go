@@ -42,8 +42,8 @@ func main() {
 	defer span.End()
 
 	// var err error
-	a.bot = &dbot.Bot{}
-	a.bot.Connect(ctx, a.discordToken)
+	a.bot = dbot.NewBot(a.discordToken, a.replicateToken)
+	a.bot.Connect(ctx)
 	defer a.bot.State.Close()
 	a.logger.Ctx(ctx).Infow("replicator bot started", "version", version.Version)
 	// a.asanaClient = initAsanaClient(ctx, asanaPAT)

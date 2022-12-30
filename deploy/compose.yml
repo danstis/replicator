@@ -34,5 +34,6 @@ services:
       - "OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}"
       - "OTEL_HEALTH_URL=http://collector:13133"
       - "DISCORD_TOKEN=${DISCORD_TOKEN}"
+      - "REPLICATE_TOKEN=${REPLICATE_TOKEN}"
     depends_on:
       - collector

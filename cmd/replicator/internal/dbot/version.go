@@ -16,12 +16,12 @@ import (
 )
 
 func init() {
-	command.Register("version", commandVersionObject)
+	command.Register("version", commandOpenJourneyObject)
 }
 
 var commandVersionObject = command.Handler{
 	Description: "Return the current bot version",
-	Code:        CommandVersion,
+	Code:        CommandOpenJourney,
 }
 
 func CommandVersion(state *state.State, event *gateway.InteractionCreateEvent, cmd *discord.CommandInteraction) command.Response {

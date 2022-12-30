@@ -2,7 +2,6 @@ package dbot
 
 import (
 	"context"
-	"log"
 	"strconv"
 
 	"github.com/danstis/replicator/cmd/replicator/internal/dbot/interactions/autocomplete"
@@ -21,24 +20,38 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type Bot struct {
-	// State contains the bot state.
-	State *state.State
+var (
+	// discordToken contains the discord bot token, created at https://discord.com/developers/applications.
+	discordToken string
 
 	// log is used to log messages using zap and the otel logger.
 	log *otelzap.SugaredLogger
+
+	// replicateToken contains the auth token from https://replicate.com/account.
+	replicateToken string
+)
+
+type Bot struct {
+	// State contains the bot state.
+	State *state.State
+}
+
+func NewBot(dt, rt string) *Bot {
+	discordToken = dt
+	replicateToken = rt
+	return &Bot{}
 }
 
 // Connect creates a connection to the discord server.
-func (b *Bot) Connect(ctx context.Context, token string) {
+func (b *Bot) Connect(ctx context.Context) {
 	ctx, span := otel.GetTracerProvider().Tracer("").Start(ctx, "dbot.Connect")
 	defer span.End()
 	var err error
-	b.log, err = logging.InitLogger(zapcore.InfoLevel)
+	log, err = logging.InitLogger(zapcore.InfoLevel)
 	if err != nil {
 		log.Fatalf("failed to initialize logger: %v", err)
 	}
-	b.State = state.New("Bot " + token)
+	b.State = state.New("Bot " + discordToken)
 
 	addIntents(ctx, b.State)
 
@@ -54,30 +67,30 @@ func (b *Bot) Connect(ctx context.Context, token string) {
 	delete.AddHandler(b.State)
 	edit.AddHandler(b.State)
 
-	b.log.Ctx(ctx).Infof("connecting to discord")
+	log.Ctx(ctx).Infof("connecting to discord")
 	if err := b.State.Open(context.Background()); err != nil {
-		b.log.Ctx(ctx).Fatalw(
+		log.Ctx(ctx).Fatalw(
 			"failed to connect to discord",
 			"error", err,
 		)
 	}
 
-	b.log.Ctx(ctx).Infof("getting bot discord user")
+	log.Ctx(ctx).Infof("getting bot discord user")
 	u, err := b.State.Me()
 	if err != nil {
-		b.log.Ctx(ctx).Fatalw(
+		log.Ctx(ctx).Fatalw(
 			"failed to get bot user",
 			"error", err,
 		)
 	}
-	b.log.Ctx(ctx).Infow(
+	log.Ctx(ctx).Infow(
 		"connected to discord",
 		"username", u.Username,
 		"discriminator", u.Discriminator,
 	)
 
 	if err := command.RegisterCommands(ctx, b.State); err != nil {
-		b.log.Ctx(ctx).Fatalw(
+		log.Ctx(ctx).Fatalw(
 			"failed to register commands",
 			"error", err,
 		)
@@ -122,7 +135,7 @@ func (b *Bot) PostMessage(ctx context.Context, colour string, message string, em
 	// Parse the color into decimal numbers.
 	colorHex, err := HexColourToInt(ctx, colour)
 	if err != nil {
-		b.log.Ctx(ctx).Errorw(
+		log.Ctx(ctx).Errorw(
 			"failed to convert color",
 			"error", err,
 		)
@@ -132,7 +145,7 @@ func (b *Bot) PostMessage(ctx context.Context, colour string, message string, em
 
 	_, err = b.State.SendMessage(channel, message, embed)
 	if err != nil {
-		b.log.Ctx(ctx).Errorw(
+		log.Ctx(ctx).Errorw(
 			"failed to post message",
 			"channel", channel,
 			"title", embed.Title,
